@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { supabase } from '../supabaseClient';
 
 const TimerContainer = styled.div`
   position: fixed;
@@ -34,121 +33,47 @@ const TimeValue = styled.span`
 
 interface TimerProps {
   onExpire: () => void;
+  code: string;
+  navigate: (path: string) => void;
 }
 
-export const Timer: React.FC<TimerProps> = ({ onExpire }) => {
+export const Timer: React.FC<TimerProps> = ({ onExpire, code, navigate }) => {
   const [timeLeft, setTimeLeft] = useState<number>(() => {
-    // კომპონენტის ინიციალიზაციისას ვამოწმებთ შენახულ დროს
-    const savedTime = localStorage.getItem('expireTime');
-    if (savedTime) {
-      const expireTime = parseInt(savedTime);
-      const now = Date.now();
-      const remaining = Math.floor((expireTime - now) / 1000);
-      return remaining > 0 ? remaining : 31557600;
-    }
-    return 31557600;
+    const expireTime = localStorage.getItem('expireTime');
+    if (!expireTime) return 10;
+    const timeLeftMs = parseInt(expireTime) - Date.now();
+    return Math.max(0, Math.floor(timeLeftMs / 1000));
   });
-  const [lastSync, setLastSync] = useState<number>(Date.now());
 
   useEffect(() => {
-    const checkAndUpdateTime = async () => {
-      try {
-        const now = Date.now();
-        // მხოლოდ მაშინ ვაგზავნით მოთხოვნას, თუ ბოლო სინქრონიზაციიდან გავიდა 5 წუთი
-        if (now - lastSync >= 300000) {
-          const { data, error } = await supabase
-            .from('access_time')
-            .select('expire_time')
-            .limit(1)
-            .single();
-          
-          if (error) throw error;
-          
-          if (data) {
-            const serverExpireTime = new Date(data.expire_time).getTime();
-            const remaining = Math.floor((serverExpireTime - now) / 1000);
-            
-            if (remaining <= 0) {
-              onExpire();
-              return;
-            }
-            
-            setTimeLeft(remaining);
-            setLastSync(now);
-            // ვინახავთ ახალ დროს
-            localStorage.setItem('expireTime', serverExpireTime.toString());
-          }
-        }
-      } catch (err) {
-        console.error('Error syncing time:', err);
-        // თუ სერვერთან კავშირი ვერ მოხერხდა, ვაგრძელებთ ლოკალური დროით
-        const localExpireTime = localStorage.getItem('expireTime');
-        if (localExpireTime) {
-          const remaining = Math.floor((parseInt(localExpireTime) - Date.now()) / 1000);
-          if (remaining <= 0) {
-            onExpire();
-          } else {
-            setTimeLeft(remaining);
-          }
-        }
-      }
-    };
+    // Check if blocked
+    const blocked = localStorage.getItem('blocked') === 'true';
+    if (blocked) {
+      navigate('/request');
+      return;
+    }
 
-    // თავდაპირველი შემოწმება
-    checkAndUpdateTime();
+    // Check if expired
+    const expireTime = localStorage.getItem('expireTime');
+    if (!expireTime || Date.now() >= parseInt(expireTime)) {
+      onExpire();
+      navigate('/request');
+      return;
+    }
 
-    // ლოკალური ტაიმერი
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         const newTime = prev - 1;
         if (newTime <= 0) {
-          clearInterval(timer);
           onExpire();
-          return 0;
+          navigate('/request');
         }
-        // ყოველ წამში ვანახლებთ ლოკალურ დროს
-        const expireTime = Date.now() + (newTime * 1000);
-        localStorage.setItem('expireTime', expireTime.toString());
-        return newTime;
+        return Math.max(0, newTime);
       });
     }, 1000);
 
-    // სერვერთან სინქრონიზაცია ყოველ 5 წუთში
-    const syncInterval = setInterval(checkAndUpdateTime, 300000);
-
-    return () => {
-      clearInterval(timer);
-      clearInterval(syncInterval);
-    };
-  }, [onExpire, lastSync]);
-
-  useEffect(() => {
-    const checkAccess = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('access_requests')
-          .select('status')
-          .eq('code', localStorage.getItem('lastRequestCode'))
-          .single();
-
-        if (error) throw error;
-
-        if (data?.status === 'blocked') {
-          localStorage.clear();
-          window.location.href = '/request';
-          return;
-        }
-      } catch (err) {
-        console.error('Error checking access:', err);
-      }
-    };
-
-    // შემოწმება ყოველ 5 წუთში
-    checkAccess();
-    const interval = setInterval(checkAccess, 300000);
-
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(timer);
+  }, [navigate, onExpire]);
 
   const formatTime = (seconds: number): string => {
     const days = Math.floor(seconds / 86400);
@@ -160,9 +85,11 @@ export const Timer: React.FC<TimerProps> = ({ onExpire }) => {
   };
 
   return (
-    <TimerContainer>
-      დარჩენილი დრო: <TimeValue>{formatTime(timeLeft)}</TimeValue>
-    </TimerContainer>
+    <div>
+      <TimerContainer>
+        დარჩენილი დრო: <TimeValue>{formatTime(timeLeft)}</TimeValue>
+      </TimerContainer>
+    </div>
   );
 };
 

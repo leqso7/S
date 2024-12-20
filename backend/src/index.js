@@ -4,6 +4,8 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
 import requestRoutes from './routes/requests.js'
+import adminRoutes from './routes/admin.js'
+import { checkBlockedIP } from './middleware/auth.js'
 
 dotenv.config()
 
@@ -27,12 +29,14 @@ app.use(cors({
 app.use(helmet())
 app.use(limiter)
 app.use(express.json())
+app.use(checkBlockedIP)  // IP ბლოკირების შემოწმება
 
 // Pre-flight requests
 app.options('*', cors())
 
 // Routes
 app.use('/api/requests', requestRoutes)
+app.use('/api/admin', adminRoutes)  // ახალი admin მარშრუტი
 
 // Health check endpoint
 app.get('/health', (req, res) => {

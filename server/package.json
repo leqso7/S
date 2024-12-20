@@ -1,9 +1,8 @@
 {
-  "name": "class-manager-backend",
+  "name": "class-manager-server",
   "version": "1.0.0",
-  "description": "Backend for Class Manager application",
+  "description": "Backend server for Class Manager",
   "main": "src/index.js",
-  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
@@ -15,7 +14,7 @@
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "helmet": "^7.2.0",
-    "uuid": "^9.0.1"
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

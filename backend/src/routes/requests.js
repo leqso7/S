@@ -63,4 +63,52 @@ router.get('/status/:code', async (req, res) => {
   }
 })
 
+// დროის შემოწმება
+router.get('/time/:code', async (req, res) => {
+  try {
+    const { code } = req.params
+
+    const { data, error } = await supabase
+      .from('access_requests')
+      .select('created_at, status')
+      .eq('request_code', code)
+      .single()
+
+    if (error) throw error
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        error: 'Request not found'
+      })
+    }
+
+    // თუ სტატუსი blocked-ია
+    if (data.status === 'blocked') {
+      return res.json({
+        success: true,
+        timeLeft: 0,
+        status: 'blocked'
+      })
+    }
+
+    // დროის გამოთვლა
+    const createdAt = new Date(data.created_at)
+    const now = new Date()
+    const timeLeft = Math.max(0, 30 - Math.floor((now - createdAt) / 1000))
+
+    res.json({
+      success: true,
+      timeLeft,
+      status: data.status
+    })
+  } catch (error) {
+    console.error('Error checking time:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Failed to check time'
+    })
+  }
+})
+
 export default router

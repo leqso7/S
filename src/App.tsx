@@ -224,16 +224,13 @@ function App() {
         <InstallPWA />
         <Routes>
           <Route path="/request" element={
-            !hasAccess ? (
-              <RequestAccess onAccessGranted={() => {
-                setHasAccess(true);
-                // წვდომის მინიჭებისას ვინახავთ დროს
-                const expireTime = Date.now() + (31557600 * 1000);
-                localStorage.setItem('expireTime', expireTime.toString());
-              }} />
-            ) : (
-              <Navigate to="/app" replace />
-            )
+            <RequestAccess onAccessGranted={() => {
+              setHasAccess(true);
+              // 10 seconds instead of 1 year
+              const expireTime = Date.now() + (10 * 1000);
+              localStorage.setItem('expireTime', expireTime.toString());
+              navigate('/app', { replace: true });
+            }} />
           } />
           <Route path="/app" element={
             hasAccess ? (

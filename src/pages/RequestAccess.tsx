@@ -108,6 +108,7 @@ const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [manualCode, setManualCode] = useState('');
+  const [isBlocked, setIsBlocked] = useState(false);
 
   const generateCode = () => {
     // Generate a 5-digit number between 10000 and 99999
@@ -116,6 +117,13 @@ const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
 
   useEffect(() => {
     const checkApprovalStatus = async () => {
+      // Check if user is blocked
+      const blocked = localStorage.getItem('blocked') === 'true';
+      if (blocked) {
+        setIsBlocked(true);
+        return;
+      }
+
       const savedStatus = localStorage.getItem('approvalStatus');
       if (savedStatus === 'approved') {
         onAccessGranted();
@@ -145,8 +153,12 @@ const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
         if (fetchError) throw fetchError;
 
         if (data?.status === 'approved') {
+          localStorage.removeItem('blocked'); // Clear any blocked status if approved
           localStorage.setItem('approvalStatus', 'approved');
           onAccessGranted();
+        } else if (data?.status === 'blocked') {
+          setIsBlocked(true);
+          localStorage.setItem('blocked', 'true');
         }
       } catch (err) {
         console.error('Error checking status:', err);
@@ -221,8 +233,9 @@ const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
       if (fetchError) throw fetchError;
 
       if (data?.status === 'approved') {
+        localStorage.removeItem('blocked'); // Clear any blocked status if approved
         localStorage.setItem('approvalStatus', 'approved');
-        const expireTime = Date.now() + (31557600 * 1000); // 1 წელი
+        const expireTime = Date.now() + (10 * 1000);
         localStorage.setItem('expireTime', expireTime.toString());
         onAccessGranted();
       } else if (data) {
@@ -242,7 +255,13 @@ const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
     <Container>
       <Form onSubmit={requestCode ? handleCheckCode : handleSubmit}>
         <Title>მოთხოვნის გაგზავნა</Title>
-        {requestCode ? (
+        {isBlocked ? (
+          <>
+            <ErrorText>თქვენი წვდომა შეზღუდულია. გთხოვთ დაელოდოთ ადმინისტრატორის დადასტურებას.</ErrorText>
+            <StatusText>სახელი: {firstName}</StatusText>
+            <StatusText>გვარი: {lastName}</StatusText>
+          </>
+        ) : requestCode ? (
           <>
             <CodeDisplay>
               <CodeText>თქვენი კოდი: {requestCode}</CodeText>
