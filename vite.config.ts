@@ -23,18 +23,10 @@ export default defineConfig({
           {
             src: 'vite.svg',
             sizes: '192x192',
-            type: 'image/svg+xml'
-          },
-          {
-            src: 'vite.svg',
-            sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable'
           }
         ]
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}']
       }
     })
   ]

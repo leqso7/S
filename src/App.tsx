@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, HashRouter } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 import RequestAccess from './pages/RequestAccess'
 import SearchList, { Student } from './components/SearchList'
@@ -230,51 +230,53 @@ function App() {
     <>
       <GlobalStyle />
       <ToastContainer position="top-right" />
-      <AppContainer>
-        <InstallPWA />
-        <Routes>
-          <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
-          <Route path="/request" element={
-            <RequestAccess onAccessGranted={() => {
-              setHasAccess(true);
-              const expireTime = Date.now() + (10 * 1000);
-              localStorage.setItem('expireTime', expireTime.toString());
-              navigate('/app', { replace: true });
-            }} />
-          } />
-          <Route path="/app" element={
-            hasAccess ? (
-              <>
-                <Timer 
-                  onExpire={handleAccessExpire} 
-                  code={localStorage.getItem('requestCode') || ''} 
-                  navigate={navigate}
-                />
-                <SearchList students={students} setStudents={setStudents} />
-              </>
-            ) : (
-              <Navigate to="/request" replace />
-            )
-          } />
-          <Route path="*" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
-        </Routes>
-        <ClassForm $isVisible={isClassFormVisible}>
-          <h2>კლასის დამატება</h2>
-          <Input
-            type="text"
-            placeholder="კლასის სახელი"
-            value={className}
-            onChange={(e) => setClassName(e.target.value)}
-          />
-          <TextArea
-            placeholder="მოსწავლეების სია (თითო მოსწავლე ახალ ხაზზე)"
-            value={classList}
-            onChange={(e) => setClassList(e.target.value)}
-          />
-          <SaveButton onClick={handleSaveClass}>შენახვა</SaveButton>
-          <SaveButton onClick={() => setIsClassFormVisible(false)}>დახურვა</SaveButton>
-        </ClassForm>
-      </AppContainer>
+      <HashRouter>
+        <AppContainer>
+          <InstallPWA />
+          <Routes>
+            <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
+            <Route path="/request" element={
+              <RequestAccess onAccessGranted={() => {
+                setHasAccess(true);
+                const expireTime = Date.now() + (10 * 1000);
+                localStorage.setItem('expireTime', expireTime.toString());
+                navigate('/app', { replace: true });
+              }} />
+            } />
+            <Route path="/app" element={
+              hasAccess ? (
+                <>
+                  <Timer 
+                    onExpire={handleAccessExpire} 
+                    code={localStorage.getItem('requestCode') || ''} 
+                    navigate={navigate}
+                  />
+                  <SearchList students={students} setStudents={setStudents} />
+                </>
+              ) : (
+                <Navigate to="/request" replace />
+              )
+            } />
+            <Route path="*" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
+          </Routes>
+          <ClassForm $isVisible={isClassFormVisible}>
+            <h2>კლასის დამატება</h2>
+            <Input
+              type="text"
+              placeholder="კლასის სახელი"
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
+            />
+            <TextArea
+              placeholder="მოსწავლეების სია (თითო მოსწავლე ახალ ხაზზე)"
+              value={classList}
+              onChange={(e) => setClassList(e.target.value)}
+            />
+            <SaveButton onClick={handleSaveClass}>შენახვა</SaveButton>
+            <SaveButton onClick={() => setIsClassFormVisible(false)}>დახურვა</SaveButton>
+          </ClassForm>
+        </AppContainer>
+      </HashRouter>
     </>
   );
 }
