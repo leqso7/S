@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate, HashRouter } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 import RequestAccess from './pages/RequestAccess'
 import SearchList, { Student } from './components/SearchList'
@@ -236,7 +236,7 @@ function App() {
   };
 
   return (
-    <HashRouter>
+    <>
       <GlobalStyle />
       <Container>
         <Routes>
@@ -294,7 +294,7 @@ function App() {
         </ClassForm>
       </Container>
       <ToastContainer position="bottom-right" />
-    </HashRouter>
+    </>
   );
 }
 
