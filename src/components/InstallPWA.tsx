@@ -8,28 +8,28 @@ interface BeforeInstallPromptEvent extends Event {
 
 const InstallButton = styled.button`
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 8px 15px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   z-index: 1001;
   transition: all 0.3s ease;
 
   &:hover {
     background: #45a049;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
 
   @media (max-width: 768px) {
-    padding: 8px 15px;
-    font-size: 14px;
-    top: 10px;
-    right: 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+    top: 8px;
+    right: 8px;
   }
 `;
 

@@ -107,29 +107,44 @@ function App() {
 
   useEffect(() => {
     const checkAccess = () => {
-      const savedStatus = localStorage.getItem('approvalStatus');
-      const expireTime = localStorage.getItem('expireTime');
-      
-      if (savedStatus === 'approved' && expireTime) {
-        const now = Date.now();
-        const expire = parseInt(expireTime);
+      try {
+        const savedStatus = localStorage.getItem('approvalStatus');
+        const expireTime = localStorage.getItem('expireTime');
         
-        if (now >= expire) {
-          setHasAccess(false);
-          localStorage.removeItem('approvalStatus');
-          localStorage.removeItem('expireTime');
-          navigate('/request', { replace: true });
+        if (savedStatus === 'approved' && expireTime) {
+          const now = Date.now();
+          const expire = parseInt(expireTime);
+          
+          if (isNaN(expire)) {
+            console.error('Invalid expire time format');
+            setHasAccess(false);
+            localStorage.removeItem('approvalStatus');
+            localStorage.removeItem('expireTime');
+            navigate('/request', { replace: true });
+            return;
+          }
+          
+          if (now >= expire) {
+            setHasAccess(false);
+            localStorage.removeItem('approvalStatus');
+            localStorage.removeItem('expireTime');
+            navigate('/request', { replace: true });
+          } else {
+            setHasAccess(true);
+          }
         } else {
-          setHasAccess(true);
+          setHasAccess(false);
         }
-      } else {
-        setHasAccess(false);
-      }
 
-      // თუ მთავარ გვერდზე ვართ, გადავამისამართოთ
-      if (window.location.pathname === '/class-manager-./' || 
-          window.location.pathname === '/class-manager-.') {
-        navigate(hasAccess ? '/app' : '/request', { replace: true });
+        // Check current path only after access state is determined
+        if (window.location.pathname === '/class-manager-./' || 
+            window.location.pathname === '/class-manager-.') {
+          navigate(hasAccess ? '/app' : '/request', { replace: true });
+        }
+      } catch (error) {
+        console.error('Error checking access:', error);
+        setHasAccess(false);
+        navigate('/request', { replace: true });
       }
     };
 
@@ -235,7 +250,11 @@ function App() {
           <Route path="/app" element={
             hasAccess ? (
               <>
-                <Timer onExpire={handleAccessExpire} />
+                <Timer 
+                  onExpire={handleAccessExpire} 
+                  code={localStorage.getItem('requestCode') || ''} 
+                  navigate={navigate}
+                />
                 <SearchList students={students} setStudents={setStudents} />
               </>
             ) : (
