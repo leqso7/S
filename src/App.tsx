@@ -151,9 +151,9 @@ function App() {
   useEffect(() => {
     const path = window.location.pathname;
     if (path === '/S/' || path === '/S/index.html' || path === '/S') {
-      window.location.replace(hasAccess ? '/S/#/app' : '/S/#/request');
+      window.location.replace('/S' + (hasAccess ? '/app' : '/request'));
     }
-  }, []);
+  }, [hasAccess]);
 
   if (hasAccess === null) {
     return (
