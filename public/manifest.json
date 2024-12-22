@@ -2,7 +2,7 @@
   "name": "Class Application",
   "short_name": "Class App",
   "description": "Class Management Application",
-  "start_url": ".",
+  "start_url": "/S/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
