@@ -5,24 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/S/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Class Manager</title>
-    <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
+      (function() {
+        const pathname = window.location.pathname;
+        if (pathname === '/S/' || pathname === '/S/index.html') {
+          const hasAccess = localStorage.getItem('hasAccess') === 'true';
+          window.location.href = hasAccess ? '/S/#/app' : '/S/#/request';
         }
-      }(window.location))
+      })();
     </script>
-    <!-- End Single Page Apps for GitHub Pages -->
-    <script type="module" crossorigin src="/S/assets/index-DMzILEr1.js"></script>
+    <script type="module" crossorigin src="/S/assets/index-Ltc-oRhm.js"></script>
     <link rel="stylesheet" crossorigin href="/S/assets/index-D-Xodb0M.css">
   <link rel="manifest" href="/S/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/S/registerSW.js"></script></head>
   <body>
