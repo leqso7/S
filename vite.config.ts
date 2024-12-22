@@ -17,8 +17,8 @@ export default defineConfig({
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/S/',
-        scope: '/S/',
+        start_url: '.',
+        scope: '.',
         icons: [
           {
             src: 'vite.svg',

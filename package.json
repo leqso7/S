@@ -2,7 +2,7 @@
   "name": "class-manager",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://leqso7.github.io/S/",
+  "homepage": "https://leqso7.github.io/S",
   "type": "module",
   "scripts": {
     "dev": "vite",
