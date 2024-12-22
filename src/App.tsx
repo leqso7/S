@@ -35,7 +35,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const AppContainer = styled.div`
+const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(120deg, #ffeb3b 0%, #8bc34a 100%);
   display: flex;
@@ -147,19 +147,19 @@ function App() {
   }, [navigate]);
 
   useEffect(() => {
-    const pathname = window.location.pathname;
-    if (pathname === '/S/' || pathname === '/S/index.html') {
-      window.location.href = hasAccess ? '/S/#/app' : '/S/#/request';
+    const path = window.location.pathname;
+    if (path === '/S/' || path === '/S/index.html' || path === '/S') {
+      window.location.replace(hasAccess ? '/S/#/app' : '/S/#/request');
     }
-  }, [hasAccess]);
+  }, []);
 
   if (hasAccess === null) {
     return (
-      <AppContainer>
+      <Container>
         <div style={{ textAlign: 'center', padding: '20px', color: '#333' }}>
           იტვირთება...
         </div>
-      </AppContainer>
+      </Container>
     );
   }
 
@@ -236,7 +236,7 @@ function App() {
   return (
     <HashRouter>
       <GlobalStyle />
-      <AppContainer>
+      <Container>
         <Routes>
           <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
           <Route
@@ -290,7 +290,7 @@ function App() {
           <SaveButton onClick={handleSaveClass}>შენახვა</SaveButton>
           <SaveButton onClick={() => setIsClassFormVisible(false)}>დახურვა</SaveButton>
         </ClassForm>
-      </AppContainer>
+      </Container>
       <ToastContainer position="bottom-right" />
     </HashRouter>
   );
