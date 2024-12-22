@@ -137,8 +137,8 @@ function App() {
         }
 
         // Check current path only after access state is determined
-        if (window.location.pathname === '/class-manager-./' || 
-            window.location.pathname === '/class-manager-.') {
+        if (window.location.pathname === '/S/' || 
+            window.location.pathname === '/S') {
           navigate(hasAccess ? '/app' : '/request', { replace: true });
         }
       } catch (error) {
@@ -241,7 +241,6 @@ function App() {
           <Route path="/request" element={
             <RequestAccess onAccessGranted={() => {
               setHasAccess(true);
-              // 10 seconds instead of 1 year
               const expireTime = Date.now() + (10 * 1000);
               localStorage.setItem('expireTime', expireTime.toString());
               navigate('/app', { replace: true });
@@ -261,6 +260,7 @@ function App() {
               <Navigate to="/request" replace />
             )
           } />
+          <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
           <Route path="*" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
         </Routes>
         <ClassForm $isVisible={isClassFormVisible}>
