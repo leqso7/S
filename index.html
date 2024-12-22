@@ -5,16 +5,27 @@
     <link rel="icon" type="image/svg+xml" href="/S/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Class Manager</title>
-    <script type="text/javascript">
+    <script>
+      window.onload = function() {
+        const hasAccess = localStorage.getItem('hasAccess') === 'true';
+        const path = window.location.pathname;
+        
+        if (path === '/S/' || path === '/S/index.html' || path === '/S') {
+          window.location.replace(hasAccess ? '/S/#/app' : '/S/#/request');
+        }
+      };
+
+      // Immediate redirect attempt
       (function() {
-        const pathname = window.location.pathname;
-        if (pathname === '/S/' || pathname === '/S/index.html') {
-          const hasAccess = localStorage.getItem('hasAccess') === 'true';
-          window.location.href = hasAccess ? '/S/#/app' : '/S/#/request';
+        const hasAccess = localStorage.getItem('hasAccess') === 'true';
+        const path = window.location.pathname;
+        
+        if (path === '/S/' || path === '/S/index.html' || path === '/S') {
+          window.location.replace(hasAccess ? '/S/#/app' : '/S/#/request');
         }
       })();
     </script>
-    <script type="module" crossorigin src="/S/assets/index-Ltc-oRhm.js"></script>
+    <script type="module" crossorigin src="/S/assets/index-CSU3sOKO.js"></script>
     <link rel="stylesheet" crossorigin href="/S/assets/index-D-Xodb0M.css">
   <link rel="manifest" href="/S/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/S/registerSW.js"></script></head>
   <body>
