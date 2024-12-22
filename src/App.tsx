@@ -149,9 +149,9 @@ function App() {
   }, [navigate]);
 
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/S/' || path === '/S/index.html' || path === '/S') {
-      window.location.replace('/S' + (hasAccess ? '/app' : '/request'));
+    const hash = window.location.hash;
+    if (!hash || hash === '#/') {
+      window.location.replace('#' + (hasAccess ? '/app' : '/request'));
     }
   }, [hasAccess]);
 
