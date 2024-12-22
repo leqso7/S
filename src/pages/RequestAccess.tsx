@@ -13,20 +13,16 @@ interface RequestAccessProps {
 }
 
 const Container = styled.div`
-  min-height: 100vh;
-  width: 100vw;
-  max-width: 100vw;
-  background: linear-gradient(120deg, #ffeb3b 0%, #8bc34a 100%);
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  margin: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
+  flex-direction: column;
+  gap: 1.5rem;
+  z-index: 1;
 `;
 
 const Form = styled.form`
@@ -101,7 +97,7 @@ const Input = styled.input`
   }
 `;
 
-const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
+function RequestAccess({ onAccessGranted }: RequestAccessProps) {
   const [loading, setLoading] = useState(false);
   const [requestCode, setRequestCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -304,6 +300,6 @@ const RequestAccess: React.FC<RequestAccessProps> = ({ onAccessGranted }) => {
       </Form>
     </Container>
   );
-};
+}
 
 export default RequestAccess;

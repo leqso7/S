@@ -37,14 +37,16 @@ const GlobalStyle = createGlobalStyle`
 
 const Container = styled.div`
   min-height: 100vh;
+  width: 100vw;
   background: linear-gradient(120deg, #ffeb3b 0%, #8bc34a 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 20px;
   margin: 0;
-  width: 100%;
   position: relative;
+  overflow-x: hidden;
 `;
 
 const ClassForm = styled.div<{ $isVisible: boolean }>`
