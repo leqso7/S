@@ -134,12 +134,7 @@ function App() {
           }
         } else {
           setHasAccess(false);
-        }
-
-        // Check current path only after access state is determined
-        if (window.location.pathname === '/S/' || 
-            window.location.pathname === '/S') {
-          navigate(hasAccess ? '/app' : '/request', { replace: true });
+          navigate('/request', { replace: true });
         }
       } catch (error) {
         console.error('Error checking access:', error);
@@ -149,14 +144,7 @@ function App() {
     };
 
     checkAccess();
-  }, [navigate, hasAccess]);
-
-  const handleAccessExpire = () => {
-    setHasAccess(false);
-    localStorage.removeItem('approvalStatus');
-    localStorage.removeItem('expireTime');
-    navigate('/request', { replace: true });
-  };
+  }, [navigate]);
 
   if (hasAccess === null) {
     return (
@@ -167,6 +155,13 @@ function App() {
       </AppContainer>
     );
   }
+
+  const handleAccessExpire = () => {
+    setHasAccess(false);
+    localStorage.removeItem('approvalStatus');
+    localStorage.removeItem('expireTime');
+    navigate('/request', { replace: true });
+  };
 
   const handleSaveClass = () => {
     if (!className.trim() || !classList.trim()) {
@@ -238,6 +233,7 @@ function App() {
       <AppContainer>
         <InstallPWA />
         <Routes>
+          <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
           <Route path="/request" element={
             <RequestAccess onAccessGranted={() => {
               setHasAccess(true);
@@ -260,7 +256,6 @@ function App() {
               <Navigate to="/request" replace />
             )
           } />
-          <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
           <Route path="*" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
         </Routes>
         <ClassForm $isVisible={isClassFormVisible}>
