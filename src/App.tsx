@@ -146,6 +146,13 @@ function App() {
     checkAccess();
   }, [navigate]);
 
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    if (pathname === '/S/' || pathname === '/S/index.html') {
+      window.location.href = hasAccess ? '/S/#/app' : '/S/#/request';
+    }
+  }, [hasAccess]);
+
   if (hasAccess === null) {
     return (
       <AppContainer>
@@ -227,23 +234,29 @@ function App() {
   };
 
   return (
-    <>
+    <HashRouter>
       <GlobalStyle />
-      <ToastContainer position="top-right" />
-      <HashRouter>
-        <AppContainer>
-          <InstallPWA />
-          <Routes>
-            <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
-            <Route path="/request" element={
-              <RequestAccess onAccessGranted={() => {
-                setHasAccess(true);
-                const expireTime = Date.now() + (10 * 1000);
-                localStorage.setItem('expireTime', expireTime.toString());
-                navigate('/app', { replace: true });
-              }} />
-            } />
-            <Route path="/app" element={
+      <AppContainer>
+        <Routes>
+          <Route path="/" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
+          <Route
+            path="/request"
+            element={
+              hasAccess ? (
+                <Navigate to="/app" replace />
+              ) : (
+                <RequestAccess onAccessGranted={() => {
+                  setHasAccess(true);
+                  const expireTime = Date.now() + (10 * 1000);
+                  localStorage.setItem('expireTime', expireTime.toString());
+                  navigate('/app', { replace: true });
+                }} />
+              )
+            }
+          />
+          <Route
+            path="/app"
+            element={
               hasAccess ? (
                 <>
                   <Timer 
@@ -252,32 +265,34 @@ function App() {
                     navigate={navigate}
                   />
                   <SearchList students={students} setStudents={setStudents} />
+                  <InstallPWA />
                 </>
               ) : (
                 <Navigate to="/request" replace />
               )
-            } />
-            <Route path="*" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
-          </Routes>
-          <ClassForm $isVisible={isClassFormVisible}>
-            <h2>კლასის დამატება</h2>
-            <Input
-              type="text"
-              placeholder="კლასის სახელი"
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-            />
-            <TextArea
-              placeholder="მოსწავლეების სია (თითო მოსწავლე ახალ ხაზზე)"
-              value={classList}
-              onChange={(e) => setClassList(e.target.value)}
-            />
-            <SaveButton onClick={handleSaveClass}>შენახვა</SaveButton>
-            <SaveButton onClick={() => setIsClassFormVisible(false)}>დახურვა</SaveButton>
-          </ClassForm>
-        </AppContainer>
-      </HashRouter>
-    </>
+            }
+          />
+          <Route path="*" element={<Navigate to={hasAccess ? "/app" : "/request"} replace />} />
+        </Routes>
+        <ClassForm $isVisible={isClassFormVisible}>
+          <h2>კლასის დამატება</h2>
+          <Input
+            type="text"
+            placeholder="კლასის სახელი"
+            value={className}
+            onChange={(e) => setClassName(e.target.value)}
+          />
+          <TextArea
+            placeholder="მოსწავლეების სია (თითო მოსწავლე ახალ ხაზზე)"
+            value={classList}
+            onChange={(e) => setClassList(e.target.value)}
+          />
+          <SaveButton onClick={handleSaveClass}>შენახვა</SaveButton>
+          <SaveButton onClick={() => setIsClassFormVisible(false)}>დახურვა</SaveButton>
+        </ClassForm>
+      </AppContainer>
+      <ToastContainer position="bottom-right" />
+    </HashRouter>
   );
 }
 
